@@ -27,6 +27,18 @@ async function run() {
 
     const toyCollection = client.db("toyMarketplace").collection("toys");
 
+    //My Toys section
+    app.get("/toys", async (req, res) => {
+      console.log(req.query.email);
+      let query = {};
+      if (req.query?.email) {
+        query = { seller_email: req.query.email };
+      }
+      const result = await toyCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    //upoload file to mongodb
     app.post("/toys", async (req, res) => {
       const toy = req.body;
       console.log(toy);
