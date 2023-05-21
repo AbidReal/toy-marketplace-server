@@ -27,6 +27,22 @@ async function run() {
 
     const toyCollection = client.db("toyMarketplace").collection("toys");
 
+    //Search by toy name system
+    const indexKeys = { toy_name: 1 };
+    const indexOptions = { name: "toyName" };
+    const result = await toyCollection.createIndex(indexKeys, indexOptions);
+
+    app.get("/toySearchByName/:text", async (req, res) => {
+      const searchText = req.params.text;
+
+      const result = await toyCollection
+        .find({
+          $or: [{ toy_name: { $regex: searchText, $options: "i" } }],
+        })
+        .toArray();
+      res.send(result);
+    });
+
     //My Toys section
     app.get("/toys", async (req, res) => {
       console.log(req.query.email);
