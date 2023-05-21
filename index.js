@@ -78,9 +78,12 @@ async function run() {
       console.log(updatedToy);
       const updateDoc = {
         $set: {
-          status: updatedToy.status,
+          quantity_available: updatedToy.quantity_available,
+          price: updatedToy.price,
+          description: updatedToy.description,
         },
       };
+      const result = await toyCollection.updateOne(filter, updateDoc);
 
       res.send(result);
     });
