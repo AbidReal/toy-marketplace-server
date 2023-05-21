@@ -23,14 +23,14 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const toyCollection = client.db("toyMarketplace").collection("toys");
 
-    //Search by toy name system
-    const indexKeys = { toy_name: 1 };
-    const indexOptions = { name: "toyName" };
-    const result = await toyCollection.createIndex(indexKeys, indexOptions);
+    // Search by toy name system
+    // const indexKeys = { toy_name: 1 };
+    // const indexOptions = { name: "toyName" };
+    // const result = await toyCollection.createIndex(indexKeys, indexOptions);
 
     app.get("/toySearchByName/:text", async (req, res) => {
       const searchText = req.params.text;
@@ -45,12 +45,13 @@ async function run() {
 
     //My Toys section
     app.get("/toys", async (req, res) => {
-      console.log(req.query.email);
-      let query = {};
-      if (req.query?.email) {
-        query = { seller_email: req.query.email };
-      }
-      const cursor = toyCollection.find(query).limit(20);
+      const query = req.query.email ? { seller_email: req.query.email } : {};
+      const type = req.query.type === "ascending";
+      const value = req.query.value;
+      const sortObj = {};
+      sortObj[value] = type ? 1 : -1;
+
+      const cursor = toyCollection.find(query).limit(20).sort(sortObj);
       const result = await cursor.toArray();
       res.send(result);
     });
