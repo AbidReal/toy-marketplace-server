@@ -46,12 +46,12 @@ async function run() {
     //My Toys section
     app.get("/toys", async (req, res) => {
       const query = req.query.email ? { seller_email: req.query.email } : {};
-      const type = req.query.type === "ascending";
-      const value = req.query.value;
-      const sortObj = {};
-      sortObj[value] = type ? 1 : -1;
+      const sort = req.query.sort;
+      const options = {
+        sort: { price: sort === "asc" ? 1 : -1 },
+      };
 
-      const cursor = toyCollection.find(query).limit(20).sort(sortObj);
+      const cursor = toyCollection.find(query, options).limit(20);
       const result = await cursor.toArray();
       res.send(result);
     });
