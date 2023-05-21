@@ -34,7 +34,8 @@ async function run() {
       if (req.query?.email) {
         query = { seller_email: req.query.email };
       }
-      const result = await toyCollection.find(query).toArray();
+      const cursor = toyCollection.find(query).limit(20);
+      const result = await cursor.toArray();
       res.send(result);
     });
 
